@@ -1,0 +1,31 @@
+ECHO is on.
+# Build folders
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio working folder
+.vs/
+
+# ASP.NET Core environment files
+appsettings.Development.json
+appsettings.Local.json
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Rider IDE
+.idea/
+
+# Ignore DLLs or build artifacts
+*.dll
+*.exe
