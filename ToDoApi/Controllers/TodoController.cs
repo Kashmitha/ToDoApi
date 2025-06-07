@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ToDoApi.Data;
 using ToDoApi.Models;
+using ToDoApi.Dtos;
+using AutoMapper;   
 
 namespace ToDoApi.Controllers
 {
@@ -10,49 +12,55 @@ namespace ToDoApi.Controllers
     public class TodoController : ControllerBase
     {
         private readonly TodoContext _context;
+        private readonly IMapper _mapper;
 
-        public TodoController(TodoContext context)
+        public TodoController(TodoContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/todo
         [HttpGet]
-        public ActionResult<IEnumerable<TodoItem>> GetAll()
+        public ActionResult<IEnumerable<TodoItemDto>> GetAll()
         {
-            return _context.TodoItems.ToList();
+            var items =  _context.TodoItems.ToList();
+            return Ok(_mapper.Map<IEnumerable<TodoItemDto>>(items));
         }
 
         // GET: api/todo/{id}
         [HttpGet("{id}")]
-        public ActionResult<TodoItem> Get(int id)
+        public ActionResult<TodoItemDto> GetById(int id)
         {
             var item = _context.TodoItems.Find(id);
             if (item == null)
             {
                 return NotFound();
             }
-            return item;
+            return Ok(_mapper.Map<TodoItemDto>(item));
         }
 
         // POST: api/todo
         [HttpPost]
-        public ActionResult<TodoItem> Create(TodoItem item)
+        public ActionResult<TodoItemDto> Create(CreateTodoDto createDto)
         {
-            _context.TodoItems.Add(item);
+            var todoItem = _mapper.Map<TodoItem>(createDto);
+            _context.TodoItems.Add(todoItem);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(Get), new { id = item.Id }, item);
+            var readDto = _mapper.Map<TodoItemDto>(todoItem);
+            return CreatedAtAction(nameof(GetById), new { id = readDto.Id }, readDto);
         }
 
         // PUT: api/todo/{id}
         [HttpPut("{id}")]
-        public IActionResult Update(int id, TodoItem item)
+        public IActionResult Update(int id, CreateTodoDto updateDto)
         {
-            if (id != item.Id)
-                return BadRequest();
+            var item = _context.TodoItems.Find(id);
+            if (item == null)
+                return NotFound();
 
-            _context.Entry(item).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _mapper.Map(updateDto, item);
             _context.SaveChanges();
 
             return NoContent();
