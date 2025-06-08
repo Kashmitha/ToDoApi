@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using ToDoApi.Data;
 using ToDoApi.Models;
 using ToDoApi.Dtos;
-using AutoMapper;   
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ToDoApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TodoController : ControllerBase
