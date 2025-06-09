@@ -29,6 +29,17 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+//Allow CORS for all origins, methods, and headers (for development purposes only)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        builder => builder.WithOrigins("http://localhost:5500") // or your frontend path
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
+});
+
+
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -80,6 +91,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
